@@ -1,26 +1,102 @@
-# Dependencies
-node_modules/
+# ===========================
+# InsightIQ - Root .gitignore
+# ===========================
 
-# Environment variables
+# ---------------------------
+# Dependencies
+# ---------------------------
+node_modules/
+**/node_modules/
+
+# ---------------------------
+# Environment Variables
+# ---------------------------
 .env
 .env.*
+!.env.example
 
-# Build outputs
+# ---------------------------
+# Build Output
+# ---------------------------
 dist/
 build/
+coverage/
+.vite/
 
+# ---------------------------
+# Backend Uploads
+# ---------------------------
+backend/uploads/
+backend/temp/
+backend/tmp/
+
+# ---------------------------
 # Logs
+# ---------------------------
+logs/
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
 
-# OS files
+# ---------------------------
+# Runtime Files
+# ---------------------------
+*.pid
+*.seed
+*.pid.lock
+
+# ---------------------------
+# Operating System Files
+# ---------------------------
 .DS_Store
 Thumbs.db
+Desktop.ini
 
-# IDE files
+# ---------------------------
+# IDE / Editors
+# ---------------------------
 .vscode/
 .idea/
+*.code-workspace
 
-# Coverage
-coverage/
+# ---------------------------
+# Cache
+# ---------------------------
+.cache/
+.parcel-cache/
+.eslintcache
+
+# ---------------------------
+# Vercel / Deployment
+# ---------------------------
+.vercel/
+
+# ---------------------------
+# Render
+# ---------------------------
+.render/
+
+# ---------------------------
+# Misc
+# ---------------------------
+*.tmp
+*.temp
+*.bak
+*.swp
+
+# ---------------------------
+# Optional Generated Reports
+# ---------------------------
+*.pdf
+*.csv
+*.xlsx
+
+# Uncomment if reports should NOT be committed
+# reports/
+
+# ---------------------------
+# Keep Empty Upload Folder
+# ---------------------------
+!backend/uploads/.gitkeep
