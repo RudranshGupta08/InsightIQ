@@ -12,6 +12,7 @@ import Workspaces from "./pages/workspace/Workspaces";
 import Transactions from "./pages/transactions/Transactions";
 import Analytics from "./pages/analytics/Analytics";
 import DataHub from "./pages/datahub/DataHub";
+import Settings from "./pages/settings/Settings";
 import ProtectedRoute from "./routes/ProtectedRoute";
 
 import {
@@ -83,6 +84,15 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Workspaces />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/settings"
+              element={
+                <ProtectedRoute>
+                  <Settings />
                 </ProtectedRoute>
               }
             />

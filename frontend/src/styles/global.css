@@ -35,3 +35,116 @@ body {
   background: #2a2a2a;
   border-radius: 999px;
 }
+
+
+/* InsightIQ Settings System */
+
+html[data-theme="light"] {
+  --bg: #f4f4f5;
+  --card: #ffffff;
+  --border: #e4e4e7;
+  --text: #18181b;
+  --muted: #71717a;
+}
+
+html[data-theme="dark"] {
+  --bg: #0a0a0a;
+  --card: #111111;
+  --border: #262626;
+  --text: #fafafa;
+  --muted: #a1a1aa;
+}
+
+/* Font Sizes */
+
+html[data-font-size="small"] {
+  font-size: 14px;
+}
+
+html[data-font-size="medium"] {
+  font-size: 16px;
+}
+
+html[data-font-size="large"] {
+  font-size: 18px;
+}
+
+/* Interface Density */
+
+html[data-density="compact"] .p-6 {
+  padding: 1.1rem;
+}
+
+html[data-density="compact"] .p-8 {
+  padding: 1.5rem;
+}
+
+html[data-density="comfortable"] {
+  --density-scale: 1;
+}
+
+/* Reduced Motion */
+
+html[data-reduce-motion="true"] *,
+html[data-reduce-motion="true"] *::before,
+html[data-reduce-motion="true"] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
+/* Light Theme - Core Interface */
+
+html[data-theme="light"] body {
+  background: var(--bg);
+  color: var(--text);
+}
+
+html[data-theme="light"] .bg-black {
+  background-color: #f4f4f5;
+}
+
+html[data-theme="light"] .bg-zinc-950 {
+  background-color: #ffffff;
+}
+
+html[data-theme="light"] .bg-zinc-900 {
+  background-color: #f4f4f5;
+}
+
+html[data-theme="light"] .bg-zinc-800 {
+  background-color: #e4e4e7;
+}
+
+html[data-theme="light"] .text-white {
+  color: #18181b;
+}
+
+html[data-theme="light"] .text-zinc-300 {
+  color: #3f3f46;
+}
+
+html[data-theme="light"] .text-zinc-400 {
+  color: #52525b;
+}
+
+html[data-theme="light"] .text-zinc-500 {
+  color: #71717a;
+}
+
+html[data-theme="light"] .border-zinc-800 {
+  border-color: #e4e4e7;
+}
+
+html[data-theme="light"] .border-zinc-900 {
+  border-color: #e4e4e7;
+}
+
+html[data-theme="light"] input,
+html[data-theme="light"] select,
+html[data-theme="light"] textarea {
+  background-color: #ffffff;
+  color: #18181b;
+  border-color: #d4d4d8;
+}
