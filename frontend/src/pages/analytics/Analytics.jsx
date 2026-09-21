@@ -9,19 +9,12 @@ import AIRecommendations from "./components/AIRecommendations";
 import ExportCard from "./components/ExportCard";
 import { useAnalytics } from "../../context/AnalyticsContext";
 
-import {
-    getBusinessAnalytics,
-} from "../../utils/businessAnalytics";
 
 function Analytics() {
 
     const {
 
-        transactions,
-
-        workspaces,
-
-        allTransactions,
+        analytics,
 
         loading,
 
@@ -49,42 +42,54 @@ function Analytics() {
 
     }
 
-    const analytics = getBusinessAnalytics(
+    if (!analytics) {
 
-        transactions,
+        return (
 
-        workspaces,
+            <DashboardLayout>
 
-        allTransactions
+                <div className="flex items-center justify-center h-[70vh]">
 
-    );
+                    <p className="text-zinc-400 text-lg">
+
+                        Select a workspace to view analytics.
+
+                    </p>
+
+                </div>
+
+            </DashboardLayout>
+
+        );
+
+    }
 
     const {
 
-        businessHealth,
-
         monthlyData,
-
         revenue,
-
         expenses,
-
         profit,
-
         expenseBreakdown,
-
         workspaceComparison,
-
         recommendations,
-
-        forecast,
-
         insightMessage,
-
         insightIQScore,
-
+        scoreStatus,
+        revenueHealth,
+        expenseHealth,
+        profitability,
 
     } = analytics;
+
+    const businessHealth = {
+        insightIQScore,
+        scoreStatus,
+        revenueHealth,
+        expenseHealth,
+        profitability,
+        insightMessage,
+    };
 
     return (
 
@@ -140,13 +145,11 @@ function Analytics() {
 
                 <AIRecommendations
 
-                    recommendations={analytics.recommendations}
+                    recommendations={recommendations}
 
-                    insightMessage={analytics.insightMessage}
+                    insightMessage={insightMessage}
 
-                    forecast={analytics.forecast}
-
-                    insightIQScore={analytics.insightIQScore}
+                    insightIQScore={insightIQScore}
 
                 />
 

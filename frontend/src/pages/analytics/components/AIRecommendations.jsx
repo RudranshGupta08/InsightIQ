@@ -1,8 +1,6 @@
 import {
   Brain,
   CheckCircle2,
-  TrendingUp,
-  AlertTriangle,
   Sparkles,
 } from "lucide-react";
 
@@ -14,8 +12,6 @@ function AIRecommendations({
 
   insightMessage,
 
-  forecast,
-
   insightIQScore,
 
 }) {
@@ -26,9 +22,9 @@ function AIRecommendations({
 
       icon={<Brain size={20} />}
 
-      title="AI Business Recommendations"
+      title="Business Recommendations"
 
-      subtitle="Generated from your business performance"
+      subtitle="Derived from current business performance"
 
     >
 
@@ -57,7 +53,7 @@ function AIRecommendations({
 
               <h3 className="font-semibold mb-2">
 
-                InsightIQ AI Summary
+                InsightIQ Summary
 
               </h3>
 
@@ -120,38 +116,9 @@ function AIRecommendations({
 
         </div>
 
-        {/* Bottom Grid */}
+        {/* Business score remains temporary until the metric engine replaces it. */}
 
-        <div className="grid md:grid-cols-3 gap-4 mt-6">
-
-          <div
-            className="
-              bg-zinc-900
-              border
-              border-zinc-800
-              rounded-2xl
-              p-5
-            "
-          >
-
-            <TrendingUp
-              className="text-green-400 mb-3"
-              size={20}
-            />
-
-            <p className="text-sm text-zinc-500">
-
-              Forecast Growth
-
-            </p>
-
-            <h3 className="text-2xl font-bold mt-2">
-
-              {forecast.expectedGrowth}
-
-            </h3>
-
-          </div>
+        <div className="mt-6">
 
           <div
             className="
@@ -163,43 +130,9 @@ function AIRecommendations({
             "
           >
 
-            <Brain
-              className="text-violet-400 mb-3"
-              size={20}
-            />
-
             <p className="text-sm text-zinc-500">
 
-              AI Confidence
-
-            </p>
-
-            <h3 className="text-2xl font-bold mt-2">
-
-              {forecast.confidence}
-
-            </h3>
-
-          </div>
-
-          <div
-            className="
-              bg-zinc-900
-              border
-              border-zinc-800
-              rounded-2xl
-              p-5
-            "
-          >
-
-            <AlertTriangle
-              className="text-yellow-400 mb-3"
-              size={20}
-            />
-
-            <p className="text-sm text-zinc-500">
-
-              Business Score
+              Current business score (legacy)
 
             </p>
 
@@ -212,7 +145,6 @@ function AIRecommendations({
           </div>
 
         </div>
-
       </div>
 
     </AnalyticsCard>

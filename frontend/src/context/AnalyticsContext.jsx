@@ -1,5 +1,6 @@
 import {
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useState,
@@ -34,7 +35,12 @@ export function AnalyticsProvider({
     setLoading,
   ] = useState(true);
 
-  const refreshAnalytics =
+  const [
+    analytics,
+    setAnalytics,
+  ] = useState(null);
+
+  const refreshAnalytics = useCallback(
     async () => {
 
       try {
@@ -65,6 +71,8 @@ export function AnalyticsProvider({
           workspacesRes,
 
           allTransactionsRes,
+
+          analyticsRes,
 
         ] = await Promise.all([
 
@@ -119,6 +127,23 @@ export function AnalyticsProvider({
 
           ),
 
+          API.get(
+
+            `/analytics/dashboard?workspaceId=${workspace._id}`,
+
+            {
+
+              headers: {
+
+                Authorization:
+                  `Bearer ${userInfo.token}`,
+
+              },
+
+            }
+
+          ),
+
         ]);
 
         setTransactions(
@@ -131,6 +156,10 @@ export function AnalyticsProvider({
 
         setAllTransactions(
           allTransactionsRes.data
+        );
+
+        setAnalytics(
+          analyticsRes.data.data
         );
 
       }
@@ -147,13 +176,17 @@ export function AnalyticsProvider({
 
       }
 
-    };
+    },
+    []
+  );
 
   useEffect(() => {
+    const timer = setTimeout(() => {
+      refreshAnalytics();
+    }, 0);
 
-    refreshAnalytics();
-
-  }, []);
+    return () => clearTimeout(timer);
+  }, [refreshAnalytics]);
 
   return (
 
@@ -166,6 +199,8 @@ export function AnalyticsProvider({
         workspaces,
 
         allTransactions,
+
+        analytics,
 
         loading,
 
@@ -183,6 +218,7 @@ export function AnalyticsProvider({
 
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useAnalytics() {
 
   return useContext(

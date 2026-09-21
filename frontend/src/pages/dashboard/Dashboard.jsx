@@ -1,20 +1,9 @@
-import {
-  getBusinessAnalytics
-} from "../../utils/businessAnalytics";
-
 import InsightIQScore from "../../components/dashboard/InsightIQScore";
-
-import {
-  useEffect,
-  useState,
-} from "react";
 
 import DashboardLayout from "../../layouts/DashboardLayout";
 import {
   useAnalytics,
 } from "../../context/AnalyticsContext";
-
-import API from "../../api/axios";
 
 import {
   ResponsiveContainer,
@@ -32,7 +21,7 @@ function Dashboard() {
   const {
     transactions,
     workspaces,
-    allTransactions,
+    analytics,
     loading,
   } = useAnalytics();
 
@@ -58,61 +47,33 @@ function Dashboard() {
       minute: "2-digit",
     });
 
-  const analytics = getBusinessAnalytics(
-    transactions,
-    workspaces,
-    allTransactions
-  );
+  if (loading || !analytics) {
+    return (
+      <DashboardLayout>
+        <div className="text-center py-20">
+          Loading Dashboard...
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   const {
     revenue,
     expenses,
     profit,
     profitMargin,
-    expenseRatio,
 
     insightIQScore,
     scoreStatus,
-    scoreColor,
     insightMessage,
 
-    revenueHealth,
-    expenseHealth,
-    profitability,
-
-    businessPerformance,
-    workspaceComparison,
     topBusiness,
-
     recentActivities,
     monthlyData,
-    chartData,
-    highestTransaction,
-
-    expenseBreakdown,
     recommendations,
-    forecast,
-    exportData,
 
   } = analytics;
 
-  if (loading) {
-
-    return (
-
-      <DashboardLayout>
-
-        <div className="text-center py-20">
-
-          Loading Dashboard...
-
-        </div>
-
-      </DashboardLayout>
-
-    );
-
-  }
 
   return (
     <DashboardLayout>
@@ -436,7 +397,6 @@ function Dashboard() {
           scoreStatus={scoreStatus}
           profit={profit}
           profitMargin={profitMargin}
-          expenseRatio={expenseRatio}
           transactions={transactions}
           insightMessage={insightMessage}
           recommendations={recommendations}

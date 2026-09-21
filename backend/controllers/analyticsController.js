@@ -1,46 +1,13 @@
 const asyncHandler = require("express-async-handler");
-const Transaction = require("../models/Transaction");
+const { getDashboardAnalytics: buildDashboardAnalytics } = require("../services/analytics/businessAnalyticsService");
 
-const getDashboardAnalytics = asyncHandler(
-  async (req, res) => {
-    const transactions =
-      await Transaction.find({
-        ownerId: req.user._id,
-      });
+const getDashboardAnalytics = asyncHandler(async (req, res) => {
+  const analytics = await buildDashboardAnalytics({
+    userId: req.user._id,
+    workspaceId: req.query.workspaceId,
+  });
 
-    const totalRevenue =
-      transactions.reduce(
-        (sum, item) =>
-          sum + item.revenue,
-        0
-      );
+  res.json({ success: true, data: analytics });
+});
 
-    const totalProfit =
-      transactions.reduce(
-        (sum, item) =>
-          sum + item.profit,
-        0
-      );
-
-    const totalExpenses =
-      transactions.reduce(
-        (sum, item) =>
-          sum + item.expenses,
-        0
-      );
-
-    const totalTransactions =
-      transactions.length;
-
-    res.json({
-      totalRevenue,
-      totalProfit,
-      totalExpenses,
-      totalTransactions,
-    });
-  }
-);
-
-module.exports = {
-  getDashboardAnalytics,
-};
+module.exports = { getDashboardAnalytics };

@@ -236,7 +236,7 @@ function HealthCard({
 
           <span className="text-sm text-zinc-500">
 
-            Powered by InsightIQ AI
+            Calculated from current transaction data
 
           </span>
 

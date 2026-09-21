@@ -23,8 +23,6 @@ function InsightIQScore({
 
   profitMargin,
 
-  expenseRatio,
-
   transactions,
 
 }) {
@@ -51,36 +49,14 @@ function InsightIQScore({
         Dynamic Insight
   ===================================== */
 
-  let insightMessage =
-    "Continue adding transactions to unlock deeper business intelligence.";
-
-  if (profitMargin >= 40) {
-
-    insightMessage =
-      "Outstanding profitability. Your business is operating efficiently.";
-
-  }
-
-  else if (profitMargin >= 25) {
-
-    insightMessage =
-      "Financial performance is healthy with consistent growth potential.";
-
-  }
-
-  else if (profit > 0) {
-
-    insightMessage =
-      "Business remains profitable. Optimizing expenses can improve margins.";
-
-  }
-
-  else {
-
-    insightMessage =
-      "Expenses are impacting profitability. Consider reviewing operating costs.";
-
-  }
+  const insightMessage =
+    profitMargin >= 40
+      ? "Outstanding profitability. Your business is operating efficiently."
+      : profitMargin >= 25
+        ? "Financial performance is healthy with consistent growth potential."
+        : profit > 0
+          ? "Business remains profitable. Optimizing expenses can improve margins."
+          : "Expenses are impacting profitability. Consider reviewing operating costs.";
 
   /* =====================================
         Last Updated
@@ -149,7 +125,7 @@ function InsightIQScore({
 
             <p className="text-sm text-zinc-500">
 
-              AI Powered Business Health
+              Current business snapshot
 
             </p>
 
@@ -221,7 +197,7 @@ function InsightIQScore({
 
       </div>
 
-      {/* AI Insight */}
+      {/* Business insight */}
 
       <div
         className="

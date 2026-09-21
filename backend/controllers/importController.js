@@ -15,6 +15,7 @@ const LearningPayloadBuilder = require(
 const LearningEngine = require(
     "../services/learning/core/LearningEngine"
 );
+const Workspace = require("../models/Workspace");
 
 async function uploadFiles(req, res) {
 
@@ -44,6 +45,18 @@ async function uploadFiles(req, res) {
 
             });
 
+        }
+
+        const workspace = await Workspace.findOne({
+            _id: workspaceId,
+            ownerId: req.user._id,
+        }).select("_id");
+
+        if (!workspace) {
+            return res.status(403).json({
+                success: false,
+                message: "You do not have access to this workspace.",
+            });
         }
 
         const processedFiles = [];
