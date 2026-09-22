@@ -62,6 +62,22 @@ const transactionSchema =
         required: true,
       },
 
+      financialClass: {
+        type: String,
+        enum: [
+          "revenue",
+          "expense",
+          "financing",
+          "investment",
+          "transfer",
+          "asset",
+          "liability",
+          "adjustment",
+        ],
+        default: "adjustment",
+        index: true,
+      },
+
       category: {
         type: String,
         required: true,
@@ -224,6 +240,28 @@ const transactionSchema =
       },
 
       aiConfidence: {
+        type: Number,
+        default: 0,
+      },
+
+      source: {
+        type: String,
+        enum: ["manual", "csv", "excel", "pdf", "word", "image", "api"],
+        default: "manual",
+      },
+
+      sourceFileName: {
+        type: String,
+        default: "",
+      },
+
+      sourceBatchId: {
+        type: String,
+        default: "",
+        index: true,
+      },
+
+      sourceRowIndex: {
         type: Number,
         default: 0,
       },
