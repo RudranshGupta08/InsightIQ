@@ -17,8 +17,55 @@ function isValidDateValue(value) {
 
     if (!looksLikeDate) return false;
 
-    const time = Date.parse(trimmed);
-    return !Number.isNaN(time);
+    const iso = trimmed.match(/^(\d{4})[-\/](\d{1,2})[-\/](\d{1,2})(?:[T\s].*)?$/);
+    if (iso) {
+        const date = new Date(Date.UTC(Number(iso[1]), Number(iso[2]) - 1, Number(iso[3])));
+        return date.getUTCFullYear() === Number(iso[1]) &&
+            date.getUTCMonth() === Number(iso[2]) - 1 &&
+            date.getUTCDate() === Number(iso[3]);
+    }
+
+    const dayFirst = trimmed.match(/^(\d{1,2})[-\/](\d{1,2})[-\/](\d{4})(?:[\s].*)?$/);
+    if (dayFirst) {
+        const date = new Date(Date.UTC(Number(dayFirst[3]), Number(dayFirst[2]) - 1, Number(dayFirst[1])));
+        return date.getUTCFullYear() === Number(dayFirst[3]) &&
+            date.getUTCMonth() === Number(dayFirst[2]) - 1 &&
+            date.getUTCDate() === Number(dayFirst[1]);
+    }
+
+    const named = trimmed.match(/^([A-Za-z]{3,9})\s+(\d{1,2}),?\s+(\d{4})$/);
+    if (!named) return false;
+
+    const date = new Date(trimmed);
+    return !Number.isNaN(date.getTime()) &&
+        date.getFullYear() === Number(named[3]) &&
+        date.getDate() === Number(named[2]);
+}
+
+const NUMERIC_FIELD_HINTS = new Set([
+    "amount",
+    "totalamount",
+    "netamount",
+    "unitprice",
+    "price",
+    "quantity",
+    "qty",
+    "value",
+]);
+
+const DATE_FIELD_HINTS = new Set([
+    "date",
+    "transactiondate",
+    "invoicedate",
+    "paymentdate",
+    "duedate",
+]);
+
+function normalizeFieldName(value = "") {
+    return String(value)
+        .trim()
+        .toLowerCase()
+        .replace(/[ _-]/g, "");
 }
 
 class BusinessSchemaBuilder {
@@ -71,15 +118,19 @@ class BusinessSchemaBuilder {
 
             const uniqueValues = [...new Set(values)];
 
+            const normalizedField = normalizeFieldName(column);
+            const hasNumericHint = NUMERIC_FIELD_HINTS.has(normalizedField);
+            const hasDateHint = DATE_FIELD_HINTS.has(normalizedField);
+
             const isNumeric =
                 values.length > 0 &&
-                numericValues.length >= values.length * 0.7;
+                (hasNumericHint || numericValues.length >= values.length * 0.7);
 
             const dateValues = values.filter(isValidDateValue);
             const isDate =
                 !isNumeric &&
                 values.length > 0 &&
-                dateValues.length >= values.length * 0.7;
+                (hasDateHint || dateValues.length >= values.length * 0.7);
 
             const field = {
                 name: column,

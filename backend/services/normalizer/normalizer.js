@@ -26,6 +26,29 @@ function normalizeNumericValue(value) {
     return negative ? -Math.abs(number) : number;
 }
 
+function isValidCalendarDate(year, month, day) {
+    const date = new Date(Date.UTC(year, month - 1, day));
+    return (
+        date.getUTCFullYear() === year &&
+        date.getUTCMonth() === month - 1 &&
+        date.getUTCDate() === day
+    );
+}
+
+function parseDateParts(value) {
+    const iso = value.match(/^(\d{4})[-\/](\d{1,2})[-\/](\d{1,2})$/);
+    if (iso) {
+        return { year: Number(iso[1]), month: Number(iso[2]), day: Number(iso[3]) };
+    }
+
+    const dayFirst = value.match(/^(\d{1,2})[-\/](\d{1,2})[-\/](\d{4})$/);
+    if (dayFirst) {
+        return { year: Number(dayFirst[3]), month: Number(dayFirst[2]), day: Number(dayFirst[1]) };
+    }
+
+    return null;
+}
+
 function normalizeDateValue(value) {
     if (value instanceof Date && !Number.isNaN(value.getTime())) {
         return value;
@@ -38,10 +61,9 @@ function normalizeDateValue(value) {
     const trimmed = value.trim();
     if (!trimmed) return value;
 
-    const isoMatch = /^(\d{4})[-\/]\d{1,2}[-\/]\d{1,2}$/.test(trimmed);
-    const dayFirstMatch = /^(\d{1,2})[-\/]\d{1,2}[-\/]\d{4}$/.test(trimmed);
+    const parts = parseDateParts(trimmed);
 
-    if (!isoMatch && !dayFirstMatch) {
+    if (!parts || !isValidCalendarDate(parts.year, parts.month, parts.day)) {
         return value;
     }
 

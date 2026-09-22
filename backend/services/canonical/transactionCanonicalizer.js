@@ -154,15 +154,48 @@ function normalizePaymentMethod(value) {
     return aliases[normalized] || "other";
 }
 
+function isValidCalendarDate(year, month, day) {
+    const date = new Date(Date.UTC(year, month - 1, day));
+    return date.getUTCFullYear() === year &&
+        date.getUTCMonth() === month - 1 &&
+        date.getUTCDate() === day;
+}
+
 function parseDate(value) {
-    if (value instanceof Date && !Number.isNaN(value.getTime())) {
-        return value;
+    if (value instanceof Date) {
+        return Number.isNaN(value.getTime()) ? null : value;
     }
 
     if (typeof value !== "string" || !value.trim()) return null;
 
-    const date = new Date(value.trim());
-    return Number.isNaN(date.getTime()) ? null : date;
+    const text = value.trim();
+    const iso = text.match(/^(\d{4})[-\/](\d{1,2})[-\/](\d{1,2})(?:[T\s].*)?$/);
+    if (iso) {
+        const year = Number(iso[1]);
+        const month = Number(iso[2]);
+        const day = Number(iso[3]);
+        if (!isValidCalendarDate(year, month, day)) return null;
+        const date = new Date(text);
+        return Number.isNaN(date.getTime()) ? null : date;
+    }
+
+    const dayFirst = text.match(/^(\d{1,2})[-\/](\d{1,2})[-\/](\d{4})(?:[\s].*)?$/);
+    if (dayFirst) {
+        const day = Number(dayFirst[1]);
+        const month = Number(dayFirst[2]);
+        const year = Number(dayFirst[3]);
+        if (!isValidCalendarDate(year, month, day)) return null;
+        const date = new Date(year, month - 1, day);
+        return Number.isNaN(date.getTime()) ? null : date;
+    }
+
+    const named = text.match(/^([A-Za-z]{3,9})\s+(\d{1,2}),?\s+(\d{4})$/);
+    if (!named) return null;
+
+    const date = new Date(text);
+    if (Number.isNaN(date.getTime())) return null;
+    return date.getFullYear() === Number(named[3]) &&
+        date.getDate() === Number(named[2]) ? date : null;
 }
 
 function inferTransactionType(row, financialClass) {
@@ -246,9 +279,18 @@ function canonicalizeRecord(row = {}, context = {}) {
         normalizeText(row.customerVendor) ||
         `${transactionType.charAt(0).toUpperCase()}${transactionType.slice(1)} transaction`;
 
-    const transactionDate =
-        parseDate(row.transactionDate || row.date || row.paymentDate) ||
-        new Date();
+    const rawTransactionDate = row.transactionDate || row.date || row.paymentDate;
+    const hasTransactionDate = rawTransactionDate !== undefined &&
+        rawTransactionDate !== null &&
+        String(rawTransactionDate).trim() !== "";
+    const transactionDate = hasTransactionDate ? parseDate(rawTransactionDate) : new Date();
+
+    if (hasTransactionDate && !transactionDate) {
+        return {
+            success: false,
+            error: "A valid transaction date could not be identified.",
+        };
+    }
 
     const category =
         normalizeText(row.category) ||

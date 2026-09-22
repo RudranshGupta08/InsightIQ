@@ -16,6 +16,7 @@ const DatasetMapper = require(
 const VocabularyBuilder = require("../utils/VocabularyBuilder");
 
 const semanticEngine = require("../../ai/semanticEngine");
+const QualityAnalyzer = require("../pipeline/analytics/analyzers/QualityAnalyzer");
 
 class MappingProcessor extends BaseProcessor {
 
@@ -48,6 +49,8 @@ class MappingProcessor extends BaseProcessor {
             await LearningPipeline.executeKnowledge(
                 context
             );
+
+            this.applyCanonicalMappings(context);
 
             if (
                 !context.mappings ||
@@ -91,6 +94,17 @@ class MappingProcessor extends BaseProcessor {
                     context.dataset
                 );
 
+            context.quality = QualityAnalyzer.analyze(
+                context.dataset,
+                context.businessSchema,
+                context.mappings,
+                context.payload.headers
+            );
+
+            context.warnings.push(
+                ...context.quality.warnings.map((warning) => warning.message)
+            );
+
             await LearningPipeline.executeAnalytics(
                 context
             );
@@ -112,7 +126,10 @@ class MappingProcessor extends BaseProcessor {
                         context.analytics,
 
                     recommendations:
-                        context.recommendations
+                        context.recommendations,
+
+                    quality:
+                        context.quality
 
                 },
 
@@ -144,6 +161,48 @@ class MappingProcessor extends BaseProcessor {
 
         });
 
+    }
+
+    applyCanonicalMappings(context) {
+
+        const canonicalMappings = new Map();
+
+        context.preparedHeaders.forEach((header) => {
+            const canonicalField = DatasetMapper.getCanonicalHeader(
+                header.normalized
+            );
+
+            if (!canonicalField) return;
+
+            canonicalMappings.set(header.original, {
+                original: header.original,
+                normalized: header.normalized,
+                mappedTo: canonicalField,
+                confidence: 100,
+                semantic: {
+                    original: header.original,
+                    normalized: header.normalized,
+                    mappedTo: canonicalField,
+                    confidence: {
+                        score: 100,
+                        level: "Very High"
+                    },
+                    reasoning: {
+                        matchedKeyword: header.original,
+                        algorithm: "Canonical Header Match"
+                    }
+                },
+                alternatives: []
+            });
+        });
+
+        if (!canonicalMappings.size) return context;
+
+        context.mappings = context.mappings.map((mapping) =>
+            canonicalMappings.get(mapping.original) || mapping
+        );
+
+        return context;
     }
 
     validateInput(payload) {
